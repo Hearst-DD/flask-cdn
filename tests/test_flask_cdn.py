@@ -106,6 +106,19 @@ class UrlTests(unittest.TestCase):
         exp = 'http://mycdnname.cloudfront.net/static/bah.js'
         self.assertEquals(self.client_get(ufs).get_data(True), exp)
 
+    def test_url_for_version(self):
+        """ Tests CDN_VERSION correctly affects generated URLs. """
+        ufs = "{{ url_for('static', filename='bah.js') }}"
+
+        self.app.config['CDN_VERSION'] = "12"
+        path = os.path.join(self.app.static_folder, 'bah.js')
+        exp = 'http://mycdnname.cloudfront.net/{0}/static/bah.js'.format(self.app.config['CDN_VERSION'])
+        self.assertEquals(self.client_get(ufs).get_data(True), exp)
+
+        self.app.config['CDN_VERSION'] = None
+        exp = 'http://mycdnname.cloudfront.net/static/bah.js'
+        self.assertEquals(self.client_get(ufs).get_data(True), exp)
+
 
 if __name__ == '__main__':
     unittest.main()

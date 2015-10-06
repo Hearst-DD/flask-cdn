@@ -8,3 +8,6 @@ Serve the static files in your Flask app from a CDN.
 
 ## Documentation
 The latest documentation for Flask-CDN can be found [here](https://flask-cdn.readthedocs.org/en/latest/).
+
+## CDN_VERSION
+Inserts string in-between the domain and the static folder.

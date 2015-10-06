@@ -33,7 +33,13 @@ def url_for(endpoint, **values):
         if request.blueprint is not None:
             static_folder = app.blueprints[request.blueprint].static_folder
 
-        urls = app.url_map.bind(app.config['CDN_DOMAIN'], url_scheme=scheme)
+        domain = app.config['CDN_DOMAIN']
+
+        if app.config['CDN_VERSION'] is not None:
+            domain = domain + "/"
+            domain = domain + str(app.config['CDN_VERSION'])
+
+        urls = app.url_map.bind(domain, url_scheme=scheme)
 
         if app.config['CDN_TIMESTAMP']:
             path = os.path.join(static_folder, values['filename'])
@@ -70,7 +76,8 @@ class CDN(object):
     def init_app(self, app):
         defaults = [('CDN_DOMAIN', None),
                     ('CDN_HTTPS', None),
-                    ('CDN_TIMESTAMP', True)]
+                    ('CDN_TIMESTAMP', True),
+                    ('CDN_VERSION', None)]
 
         for k, v in defaults:
             app.config.setdefault(k, v)
