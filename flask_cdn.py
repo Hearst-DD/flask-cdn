@@ -35,6 +35,10 @@ def url_for(endpoint, **values):
 
         domain = app.config['CDN_DOMAIN']
 
+        if app.config['CDN_FOLDER'] is not None:
+            domain = domain + "/"
+            domain = domain + str(app.config['CDN_FOLDER'])
+
         if app.config['CDN_VERSION'] is not None:
             domain = domain + "/"
             domain = domain + str(app.config['CDN_VERSION'])
@@ -77,6 +81,7 @@ class CDN(object):
         defaults = [('CDN_DOMAIN', None),
                     ('CDN_HTTPS', None),
                     ('CDN_TIMESTAMP', True),
+                    ('CDN_FOLDER', None),
                     ('CDN_VERSION', None)]
 
         for k, v in defaults:

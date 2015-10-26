@@ -27,6 +27,14 @@ class DefaultsTest(unittest.TestCase):
         """ Tests CDN_TIMESTAMP default value is correctly set. """
         self.assertEquals(self.app.config['CDN_TIMESTAMP'], True)
 
+    def test_folder_default(self):
+        """ Tests CDN_FOLDER default value is correctly set. """
+        self.assertEquals(self.app.config['CDN_FOLDER'], None)
+
+    def test_version_default(self):
+        """ Tests CDN_VERSION default value is correctly set. """
+        self.assertEquals(self.app.config['CDN_VERSION'], None)
+
 
 class UrlTests(unittest.TestCase):
     def setUp(self):
@@ -103,6 +111,19 @@ class UrlTests(unittest.TestCase):
         self.assertEquals(self.client_get(ufs).get_data(True), exp)
 
         self.app.config['CDN_TIMESTAMP'] = False
+        exp = 'http://mycdnname.cloudfront.net/static/bah.js'
+        self.assertEquals(self.client_get(ufs).get_data(True), exp)
+
+    def test_url_for_folder(self):
+        """ Tests CDN_FOLDER correctly affects generated URLs. """
+        ufs = "{{ url_for('static', filename='bah.js') }}"
+
+        self.app.config['CDN_FOLDER'] = "assets"
+        path = os.path.join(self.app.static_folder, 'bah.js')
+        exp = 'http://mycdnname.cloudfront.net/{0}/static/bah.js'.format(self.app.config['CDN_FOLDER'])
+        self.assertEquals(self.client_get(ufs).get_data(True), exp)
+
+        self.app.config['CDN_FOLDER'] = None
         exp = 'http://mycdnname.cloudfront.net/static/bah.js'
         self.assertEquals(self.client_get(ufs).get_data(True), exp)
 
